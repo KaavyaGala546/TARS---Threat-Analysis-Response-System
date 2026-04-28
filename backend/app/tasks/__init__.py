@@ -1,0 +1,7 @@
+# Celery task modules for TARS detection pipeline
+
+from app.safety.rollback import auto_rollback_task
+from app.safety.approval_handler import expire_pending_approvals
+from app.kill_chain.tracker import update_attacker_profiles
+from app.ml.adaptive import weekly_model_health_check
+from app.metrics.validator import validate_after_action, compute_metrics_15m, compute_daily_impact

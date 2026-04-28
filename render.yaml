@@ -1,0 +1,37 @@
+services:
+  # 1. TARS All-in-One Backend (API + Detection Loop)
+  - type: web
+    name: tars-backend-demo
+    runtime: python
+    plan: free
+    region: oregon
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+    rootDir: backend # Tell Render where the code is
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./tars.db
+      - key: SYNC_DATABASE_URL
+        value: sqlite:///./tars.db
+      - key: DEMO_MODE
+        value: "True"
+      - key: GROQ_API_KEY
+        sync: false 
+      - key: SHADOW_MODE
+        value: "False"
+
+  # 2. TARS Frontend
+  - type: web
+    name: tars-frontend-demo
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: frontend # Tell Render where the code is
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://tars-backend-demo.onrender.com"
